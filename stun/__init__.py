@@ -1,7 +1,9 @@
+from __future__ import absolute_import
 import binascii
 import logging
 import random
 import socket
+from six.moves import range
 
 __version__ = '0.1.0'
 
@@ -88,10 +90,10 @@ ChangedAddressError = "Meet an error, when do Test1 on Changed IP and Port"
 
 
 def _initialize():
-    items = dictAttrToVal.items()
+    items = list(dictAttrToVal.items())
     for i in range(len(items)):
         dictValToAttr.update({items[i][1]: items[i][0]})
-    items = dictMsgTypeToVal.items()
+    items = list(dictMsgTypeToVal.items())
     for i in range(len(items)):
         dictValToMsgType.update({items[i][1]: items[i][0]})
 
