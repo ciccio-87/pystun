@@ -30,7 +30,7 @@ def main():
             'Topic :: System :: Networking :: Firewalls',
         ],
         install_requires=['six'],
-        tests_require=['coverage', 'nose', 'prospector'],
+        tests_require=['coverage', 'nose', 'prospector==1.1.7'],
         test_suite='tests',
         entry_points={
             'console_scripts': [
