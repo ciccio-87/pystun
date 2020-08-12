@@ -3,15 +3,12 @@ import binascii
 import logging
 import random
 import socket
-from six.moves import range
-import six
 
 __version__ = '0.1.0'
 
 log = logging.getLogger("pystun")
 
 STUN_SERVERS = (
-    'stun.services.mozilla.org',
     'stun.ekiga.net',
     'stun.ideasip.com',
     'stun.voiparound.com',
@@ -92,6 +89,8 @@ ChangedAddressError = "Meet an error, when do Test1 on Changed IP and Port"
 
 
 def _initialize():
+    from six.moves import range
+
     items = list(dictAttrToVal.items())
     for i in range(len(items)):
         dictValToAttr.update({items[i][1]: items[i][0]})
@@ -107,6 +106,8 @@ def gen_tran_id():
 
 
 def stun_test(sock, host, port, source_ip, source_port, send_data=""):
+    import six
+
     retVal = {'Resp': False, 'ExternalIP': None, 'ExternalPort': None,
               'SourceIP': None, 'SourcePort': None, 'ChangedIP': None,
               'ChangedPort': None}
@@ -128,7 +129,7 @@ def stun_test(sock, host, port, source_ip, source_port, send_data=""):
             try:
                 buf, addr = sock.recvfrom(2048)
                 log.debug("recvfrom: %s", addr)
-                log.debug('recv buf: %s' % buf)
+                # log.debug('recv buf: %s' % buf)
                 recieved = True
             except Exception:
                 recieved = False
