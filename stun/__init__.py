@@ -4,12 +4,14 @@ import logging
 import random
 import socket
 from six.moves import range
+import six
 
 __version__ = '0.1.0'
 
 log = logging.getLogger("pystun")
 
 STUN_SERVERS = (
+    'stun.services.mozilla.org',
     'stun.ekiga.net',
     'stun.ideasip.com',
     'stun.voiparound.com',
@@ -111,7 +113,7 @@ def stun_test(sock, host, port, source_ip, source_port, send_data=""):
     str_len = "%#04d" % (len(send_data) / 2)
     tranid = gen_tran_id()
     str_data = ''.join([BindRequestMsg, str_len, tranid, send_data])
-    data = binascii.a2b_hex(str_data)
+    data = six.ensure_binary(binascii.a2b_hex(str_data))
     recvCorr = False
     while not recvCorr:
         recieved = False
@@ -126,6 +128,7 @@ def stun_test(sock, host, port, source_ip, source_port, send_data=""):
             try:
                 buf, addr = sock.recvfrom(2048)
                 log.debug("recvfrom: %s", addr)
+                log.debug('recv buf: %s' % buf)
                 recieved = True
             except Exception:
                 recieved = False
@@ -134,9 +137,9 @@ def stun_test(sock, host, port, source_ip, source_port, send_data=""):
                 else:
                     retVal['Resp'] = False
                     return retVal
-        msgtype = binascii.b2a_hex(buf[0:2])
+        msgtype = six.ensure_text(binascii.b2a_hex(buf[0:2]))
         bind_resp_msg = dictValToMsgType[msgtype] == "BindResponseMsg"
-        tranid_match = tranid.upper() == binascii.b2a_hex(buf[4:20]).upper()
+        tranid_match = tranid.upper() == six.ensure_text(binascii.b2a_hex(buf[4:20])).upper()
         if bind_resp_msg and tranid_match:
             recvCorr = True
             retVal['Resp'] = True
@@ -144,7 +147,7 @@ def stun_test(sock, host, port, source_ip, source_port, send_data=""):
             len_remain = len_message
             base = 20
             while len_remain:
-                attr_type = binascii.b2a_hex(buf[base:(base + 2)])
+                attr_type = six.ensure_text(binascii.b2a_hex(buf[base:(base + 2)]))
                 attr_len = int(binascii.b2a_hex(buf[(base + 2):(base + 4)]), 16)
                 if attr_type == MappedAddress:
                     port = int(binascii.b2a_hex(buf[base + 6:base + 8]), 16)

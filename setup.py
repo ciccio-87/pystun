@@ -29,6 +29,7 @@ def main():
             'Topic :: Internet',
             'Topic :: System :: Networking :: Firewalls',
         ],
+        install_requires=['six'],
         tests_require=['coverage', 'nose', 'prospector'],
         test_suite='tests',
         entry_points={
